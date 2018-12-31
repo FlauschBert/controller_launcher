@@ -11,30 +11,35 @@ local function add_mass_effect_andromeda_launcher (option)
   option.directory = "C:\\Users\\steam\\Downloads\\FrostyModManager_v1.0.4.2"
   option.command = "FrostyModManager.exe"
   option.parameters = "-launch Default"
+  option.trigger_once = true
 end
 local function add_steam_launcher (option)
   option.desc_text = "Steam Big Picture Mode"
   option.directory = "C:\\Program Files (x86)\\Steam"
   option.command = "Steam.exe"
   option.parameters = ""
+  option.trigger_once = true
 end
 local function add_minecraft_server (option)
   option.desc_text = "Minecraft Server 1.13.2"
   option.directory = "D:\\Minecraft_1_13_2"
-  option.command = "java -Xmx1024M -Xms1024M -jar server.jar"
+  option.command = "java -Xmx1024M -Xms1024M -jar server.jar nogui"
   option.parameters = ""
+  option.trigger_once = false
 end
 local function add_reboot (option)
   option.desc_text = "Reboot system"
   option.directory = ""
   option.command = "shutdown"
   option.parameters = "/r /t 0"
+  option.trigger_once = true
 end
 local function add_shutdown (option)
   option.desc_text = "Shutdown system"
   option.directory = ""
   option.command = "shutdown"
   option.parameters = "/s /t 0"
+  option.trigger_once = true
 end
 
 local function add_input_A (option)
@@ -98,6 +103,15 @@ end
 
 function choose_state:draw()
   local height = 60
+
+  -- show triggered item
+  if active and active.started then
+    love.graphics.printf (active.desc_key, 30, height, love.graphics.getWidth())
+    love.graphics.printf (active.desc_text .. ' started...', 80, height, love.graphics.getWidth())
+    return
+  end
+
+  -- show all items
   for _,option in ipairs(options) do
     love.graphics.printf(option.desc_key, 30, height, love.graphics.getWidth())
     love.graphics.printf(option.desc_text, 80, height, love.graphics.getWidth())
@@ -124,6 +138,15 @@ function choose_state:update(dt)
     end
     local command = 'start '..directory..active.command..' '..active.parameters
     os.execute(command)
+
+    -- switch back to where all began
+    if not active.trigger_once then
+      -- wait for command to get window focus or something like that
+      love.timer.sleep (2)
+      -- allow trigger again
+      active.started = false
+      active = nil
+    end
   end
 end
 
