@@ -21,8 +21,20 @@ end
 local function add_minecraft_server (option)
   option.desc_text = "Minecraft Server 1.13.2"
   option.directory = "D:\\Minecraft_1_13_2"
-  option.command = "java -Xmx1024M -Xms1024M -jar server.jar nogui"
-  option.parameters = ""
+  option.command = "java"
+  option.parameters = "-Xmx1024M -Xms1024M -jar server.jar nogui"
+end
+local function add_minecraft_backup (option)
+  local date = os.date ("%Y%m%dT%H%M%S")
+  local minecraft_dir = "D:/Minecraft_1_13_2"
+  option.desc_text = "Minecraft Backup"
+  option.directory = "C:\\Program Files\\7-Zip"
+  option.command = "7z.exe"
+  -- a create archive
+  -- dst archive name
+  -- src directory
+  -- exclusions with wildcard
+  option.parameters = "a "..minecraft_dir.."/backup/"..date..".zip "..minecraft_dir.."/* -xr!client -xr!logs -xr!backup -x!*.jar"
 end
 local function add_reboot (option)
   option.desc_text = "Reboot system"
@@ -74,12 +86,19 @@ function choose_state:init()
   add_input_A (steam)
   add_option (steam)
 
-  -- Minecraft server and client (steam big picture mode)
+  -- Minecraft (steam big picture mode)
   local minecraft = {}
-  add_minecraft_server (minecraft)
-  add_input_X (minecraft)
+  -- backup files first
+  add_minecraft_backup (minecraft)
+  -- start server
   minecraft.follow_up = {}
-  add_steam_launcher (minecraft.follow_up)
+  add_minecraft_server (minecraft.follow_up)
+  -- run steam in big picture mode
+  minecraft.follow_up.follow_up = {}
+  add_steam_launcher (minecraft.follow_up.follow_up)
+  -- Adapt description
+  minecraft.desc_text = "Minecraft (backup, server and steam big picture mode)"
+  add_input_X (minecraft)
   add_option (minecraft)
 
   -- Reboot
@@ -104,7 +123,7 @@ function choose_state:draw()
   -- show triggered item
   if active and active.started then
     love.graphics.printf (active.desc_key, 30, height, love.graphics.getWidth())
-    love.graphics.printf (active.desc_text .. ' started...', 50, height, love.graphics.getWidth())
+    love.graphics.printf (active.desc_text .. ' started...', 60, height, love.graphics.getWidth())
     return
   end
 
@@ -139,9 +158,11 @@ function choose_state:update(dt)
     end
   elseif not active.started then
     active.started = true
-    start (active)
-    if active.follow_up then
-      start (active.follow_up)
+    local option = active
+    while option do
+      start (option)
+      love.timer.sleep (1)
+      option = option.follow_up
     end
   end
 end
