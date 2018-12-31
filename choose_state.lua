@@ -11,35 +11,30 @@ local function add_mass_effect_andromeda_launcher (option)
   option.directory = "C:\\Users\\steam\\Downloads\\FrostyModManager_v1.0.4.2"
   option.command = "FrostyModManager.exe"
   option.parameters = "-launch Default"
-  option.trigger_once = true
 end
 local function add_steam_launcher (option)
   option.desc_text = "Steam Big Picture Mode"
   option.directory = "C:\\Program Files (x86)\\Steam"
   option.command = "Steam.exe"
   option.parameters = ""
-  option.trigger_once = true
 end
 local function add_minecraft_server (option)
   option.desc_text = "Minecraft Server 1.13.2"
   option.directory = "D:\\Minecraft_1_13_2"
   option.command = "java -Xmx1024M -Xms1024M -jar server.jar nogui"
   option.parameters = ""
-  option.trigger_once = false
 end
 local function add_reboot (option)
   option.desc_text = "Reboot system"
   option.directory = ""
   option.command = "shutdown"
   option.parameters = "/r /t 0"
-  option.trigger_once = true
 end
 local function add_shutdown (option)
   option.desc_text = "Shutdown system"
   option.directory = ""
   option.command = "shutdown"
   option.parameters = "/s /t 0"
-  option.trigger_once = true
 end
 
 local function add_input_A (option)
@@ -79,10 +74,12 @@ function choose_state:init()
   add_input_A (steam)
   add_option (steam)
 
-  -- Minecraft server
+  -- Minecraft server and client (steam big picture mode)
   local minecraft = {}
   add_minecraft_server (minecraft)
   add_input_X (minecraft)
+  minecraft.follow_up = {}
+  add_steam_launcher (minecraft.follow_up)
   add_option (minecraft)
 
   -- Reboot
@@ -107,7 +104,7 @@ function choose_state:draw()
   -- show triggered item
   if active and active.started then
     love.graphics.printf (active.desc_key, 30, height, love.graphics.getWidth())
-    love.graphics.printf (active.desc_text .. ' started...', 80, height, love.graphics.getWidth())
+    love.graphics.printf (active.desc_text .. ' started...', 50, height, love.graphics.getWidth())
     return
   end
 
@@ -117,6 +114,17 @@ function choose_state:draw()
     love.graphics.printf(option.desc_text, 80, height, love.graphics.getWidth())
     height = height + 50
   end
+end
+
+local function start (option)
+  -- directory handling
+  local directory = ''
+  if string.len (option.directory) > 0 then
+    directory = '/D"'..option.directory..'" '
+  end
+  -- start command
+  local command = 'start '..directory..option.command..' '..option.parameters
+  os.execute(command)
 end
 
 function choose_state:update(dt)
@@ -131,21 +139,9 @@ function choose_state:update(dt)
     end
   elseif not active.started then
     active.started = true
-    -- directory handling
-    local directory = ''
-    if string.len (active.directory) > 0 then
-      directory = '/D"'..active.directory..'" '
-    end
-    local command = 'start '..directory..active.command..' '..active.parameters
-    os.execute(command)
-
-    -- switch back to where all began
-    if not active.trigger_once then
-      -- wait for command to get window focus or something like that
-      love.timer.sleep (2)
-      -- allow trigger again
-      active.started = false
-      active = nil
+    start (active)
+    if active.follow_up then
+      start (active.follow_up)
     end
   end
 end
