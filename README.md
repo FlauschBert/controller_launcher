@@ -24,7 +24,7 @@ What has Steam to do with Minecraft?
 Nothing, except absolutely perfect mouse and keyboard emulation with a controller!  
 Add the Minecraft launcher executable to Steam to be able to start it out of Steam Big Picture Mode. Use at the added entry for Minecraft the controller configuration. (Please search on the web for more information on how to do this).
 
-The files are organized in one folder for Minecraft server, client and backup and the users profile (`C:\Users\<user>\AppData\roaming\.minecraft`). The server is started directly out of the main folder. The client files are inside the `client` sub folder and backups are saved into the `backup` sub folder.  
+The files are organized in one folder for Minecraft server, client and backup and the users profile (`C:\Users\<user>\AppData\Roaming\.minecraft`). The server is started directly out of the main folder. The client files are inside the `client` sub folder and backups are saved into the `backup` sub folder.
 
 #### Backup Minecraft world data files
 Before starting the Minecraft server all data can be backup'd to be able to restore in case of complete disaster ;)  
@@ -38,4 +38,4 @@ Run the client with the Minecraft launcher executable directly as further step o
 
 ## Future work
 For now the launcher allows to start a game only once and has no detection whether it was closed or something like that.  
-At least starting another game would be nice for instance. But it is not possible to bring up the window to front again with Löve2D.
+At least starting another game would be nice for instance. But it is not possible to raise the window to get focus again with Löve2D.
