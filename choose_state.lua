@@ -79,6 +79,17 @@ local function add_option (option)
   table.insert (options, option)
 end
 
+local function start (option)
+  -- directory handling
+  local directory = ''
+  if string.len (option.directory) > 0 then
+    directory = '/D"'..option.directory..'" '
+  end
+  -- start command
+  local command = 'start '..directory..option.command..' '..option.parameters
+  os.execute(command)
+end
+
 function choose_state:init()
   -- Steam Big Picture Mode
   local steam = {}
@@ -133,17 +144,6 @@ function choose_state:draw()
     love.graphics.printf(option.desc_text, 80, height, love.graphics.getWidth())
     height = height + 50
   end
-end
-
-local function start (option)
-  -- directory handling
-  local directory = ''
-  if string.len (option.directory) > 0 then
-    directory = '/D"'..option.directory..'" '
-  end
-  -- start command
-  local command = 'start '..directory..option.command..' '..option.parameters
-  os.execute(command)
 end
 
 function choose_state:update(dt)
