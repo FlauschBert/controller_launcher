@@ -2,11 +2,11 @@
 Launch applications with controller using Löve2D. Commands for starting applications address windows only. The rest works on all desktop based platforms because of Löve2D.
 
 ## Motivation
-You sit on the sofa with the controller in your hands and want to play. The computer stands somewhere else, boots and shows steam big picture mode. So far so fine. But what if you want to run other games not part of steam big picture mode?  
+You sit on the sofa with the controller in your hands and want to play. The computer stands somewhere else, boots and shows Steam Big Picture Mode. So far so fine. But what if you want to run other games not part of Steam Big Picture Mode?  
 This is about presenting a window with a list of games after system start and auto login. Games can be started with a press of a controller button or keyboard key :)
 
 ## Preparations
-Configure windows to auto login into a user. This is what you would do if using steam big picture mode too. Instead of starting steam big picture mode we run our Löve2D project.  
+Configure windows to auto login into a user. This is what you would do if using Steam Big Picture Mode too. Instead of starting Steam Big Picture Mode we run our Löve2D project.  
 Löve2D has to be installed on the system.  
 For Minecraft backup https://www.7-zip.org/ is used.
 
